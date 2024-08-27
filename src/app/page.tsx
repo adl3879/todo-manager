@@ -11,7 +11,7 @@ export default function Home() {
   const [showAddTodoForm, setShowAddTodoForm] = useState(false);
 
   return (
-    <main className="min-h-screen bg-background dark">
+    <main className="min-h-screen bg-background">
       <div className="text-white max-w-5xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-semibold">Today</h1>
         <div className="flex items-center gap-2 text-gray-400">

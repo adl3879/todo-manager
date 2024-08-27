@@ -1,15 +1,18 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface Todo {
+export type TodoOccurrence = 'once' | 'daily' | 'weekly' | 'monthly' | 'yearly';
+
+export interface Todo {
   id: number;
   text: string;
   completed: boolean;
+  occurrence: TodoOccurrence;
 }
 
 interface TodoStore {
   todos: Todo[];
-  addTodo: (text: string) => void;
+  addTodo: (text: string, occurrence: TodoOccurrence) => void;
   removeTodo: (id: number) => void;
   toggleTodo: (id: number) => void;
 }
@@ -18,9 +21,9 @@ export const useTodoStore = create<TodoStore>()(
   persist(
     (set) => ({
       todos: [],
-      addTodo: (text) =>
+      addTodo: (text, occurrence) =>
         set((state) => ({
-          todos: [...state.todos, { id: Date.now(), text, completed: false }],
+          todos: [...state.todos, { id: Date.now(), text, completed: false, occurrence }],
         })),
       removeTodo: (id) =>
         set((state) => ({
