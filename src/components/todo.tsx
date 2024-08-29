@@ -24,6 +24,16 @@ export interface TodoProps {
 export default function Todo({ todo }: TodoProps) {
   const { removeTodo, toggleTodo } = useTodoStore();
   const [isHovered, setIsHovered] = useState(false);
+  const [deleteAll, setDeleteAll] = useState(false);
+
+  const handleDelete = () => {
+    if (deleteAll) {
+      // TODO: Delete all occurrences
+      removeTodo(todo.id);
+    } else {
+      removeTodo(todo.id);
+    }
+  };
 
   return (
     <div
@@ -74,10 +84,21 @@ export default function Todo({ todo }: TodoProps) {
                 This action cannot be undone. This will permanently delete your todo and it will be removed from the
                 list.
               </AlertDialogDescription>
+              {todo.occurrence !== 'once' && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="delete-all" checked={deleteAll} onCheckedChange={() => setDeleteAll(!deleteAll)} />
+                  <label
+                    htmlFor="delete-all"
+                    className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Delete all occurrences
+                  </label>
+                </div>
+              )}
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel className="text-xs">Cancel</AlertDialogCancel>
-              <AlertDialogAction className="text-xs" onClick={() => removeTodo(todo.id)}>
+              <AlertDialogAction className="text-xs" onClick={handleDelete}>
                 Continue
               </AlertDialogAction>
             </AlertDialogFooter>

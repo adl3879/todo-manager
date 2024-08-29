@@ -99,7 +99,12 @@ export default function AddTodoForm({ setShowAddTodoForm }: AddTodoFormProps) {
           >
             Cancel
           </Button>
-          <Button onClick={handleAddTodo} size="sm" className="bg-red-500 text-white hover:bg-red-600 text-xs">
+          <Button
+            onClick={handleAddTodo}
+            disabled={todo.length === 0}
+            size="sm"
+            className="bg-red-500 text-white hover:bg-red-600 text-xs disabled:cursor-not-allowed"
+          >
             Add Todo
           </Button>
         </div>

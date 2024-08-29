@@ -5,27 +5,45 @@ import Todo from '@/components/todo';
 import { useTodoStore } from '@/store/todoStore';
 import { CalendarIcon, PlusIcon } from 'lucide-react';
 import { useState } from 'react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
 
 export default function Home() {
-  const { todos, addTodo } = useTodoStore();
+  const { todos } = useTodoStore();
   const [showAddTodoForm, setShowAddTodoForm] = useState(false);
+  const [date, setDate] = useState<Date>();
 
   return (
     <main className="min-h-screen bg-background">
       <div className="text-white max-w-5xl mx-auto px-6 py-16">
-        <h1 className="text-3xl font-semibold">Today</h1>
-        <div className="flex items-center gap-2 text-gray-400">
-          <CalendarIcon className="w-4 h-4 mt-2 mr-1" />
-          <p className="text-xs mt-2">
-            {new Date().toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            })}
-          </p>
-        </div>
+        <h1 className="text-3xl font-semibold mb-2">Today</h1>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn('w-fit justify-start text-left font-normal text-xs', !date && 'text-muted-foreground')}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date ? format(date, 'PPP') : <span>Pick a date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              initialFocus
+              fromDate={new Date()} // Set minimum date to today
+              defaultMonth={new Date()} // Always open on current month
+            />
+          </PopoverContent>
+        </Popover>
 
-        <div className="mt-10">
+        <div className="mt-8">
           {todos.map((todo) => (
             <div key={todo.id}>
               <Todo key={todo.id} todo={todo} />
