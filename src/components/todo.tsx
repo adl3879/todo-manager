@@ -15,7 +15,8 @@ import {
   AlertDialogTrigger,
 } from './ui/alert-dialog';
 import { Todo as TodoType } from '@/store/todoStore';
-import { occurrenceOptions } from './add-todo-form';
+import { recurrenceOptions } from './add-todo-form';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 export interface TodoProps {
   todo: TodoType;
@@ -25,6 +26,7 @@ export default function Todo({ todo }: TodoProps) {
   const { removeTodo, toggleTodo } = useTodoStore();
   const [isHovered, setIsHovered] = useState(false);
   const [deleteAll, setDeleteAll] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 640px)');
 
   const handleDelete = () => {
     if (deleteAll) {
@@ -34,6 +36,46 @@ export default function Todo({ todo }: TodoProps) {
       removeTodo(todo.id);
     }
   };
+
+  const DeleteButton = () => (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <button className="text-gray-500 hover:text-red-500 transition-colors">
+          <Trash2 size={16} />
+        </button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete your todo and it will be
+            removed from the list.
+          </AlertDialogDescription>
+          {todo.recurrence !== 'once' && (
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="delete-all"
+                checked={deleteAll}
+                onCheckedChange={() => setDeleteAll(!deleteAll)}
+              />
+              <label
+                htmlFor="delete-all"
+                className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Delete all recurrences
+              </label>
+            </div>
+          )}
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="text-xs">Cancel</AlertDialogCancel>
+          <AlertDialogAction className="text-xs" onClick={handleDelete}>
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 
   return (
     <div
@@ -51,15 +93,18 @@ export default function Todo({ todo }: TodoProps) {
         <div className="flex flex-col gap-1">
           <label
             htmlFor={todo.id.toString()}
-            className={cn('text-[13px]', todo.completed ? 'line-through text-gray-500' : 'text-white')}
+            className={cn(
+              'text-[13px]',
+              todo.completed ? 'line-through text-gray-500' : 'text-white',
+            )}
           >
             {todo.text}
           </label>
-          {todo.occurrence !== 'once' && (
+          {todo.recurrence !== 'once' && (
             <span className="text-[10px] text-gray-500 flex items-center">
-              {occurrenceOptions.map(
+              {recurrenceOptions.map(
                 (option) =>
-                  todo.occurrence === option.value && (
+                  todo.recurrence === option.value && (
                     <>
                       <option.icon className="mr-1 h-3 w-3" />
                       {option.label}
@@ -70,41 +115,7 @@ export default function Todo({ todo }: TodoProps) {
           )}
         </div>
       </div>
-      {isHovered && (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <button className="text-gray-500 hover:text-red-500 transition-colors">
-              <Trash2 size={16} />
-            </button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your todo and it will be removed from the
-                list.
-              </AlertDialogDescription>
-              {todo.occurrence !== 'once' && (
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="delete-all" checked={deleteAll} onCheckedChange={() => setDeleteAll(!deleteAll)} />
-                  <label
-                    htmlFor="delete-all"
-                    className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Delete all occurrences
-                  </label>
-                </div>
-              )}
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="text-xs">Cancel</AlertDialogCancel>
-              <AlertDialogAction className="text-xs" onClick={handleDelete}>
-                Continue
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      {(isHovered || isMobile) && <DeleteButton />}
     </div>
   );
 }

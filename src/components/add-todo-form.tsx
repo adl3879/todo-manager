@@ -1,11 +1,11 @@
-import { TodoOccurrence, useTodoStore } from '@/store/todoStore';
+import { TodoRecurrence, useTodoStore } from '@/store/todoStore';
 import { Card, CardContent, CardFooter } from './ui/card';
 import { useEffect, useState, useCallback } from 'react';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { CalendarClock, CalendarDays, CalendarRange, Sun, Zap } from 'lucide-react';
 
-export const occurrenceOptions = [
+export const recurrenceOptions = [
   { value: 'once', label: 'Once', icon: Zap },
   { value: 'daily', label: 'Daily', icon: Sun },
   { value: 'weekly', label: 'Weekly', icon: CalendarDays },
@@ -20,12 +20,12 @@ export interface AddTodoFormProps {
 export default function AddTodoForm({ setShowAddTodoForm }: AddTodoFormProps) {
   const { addTodo } = useTodoStore();
   const [todo, setTodo] = useState('');
-  const [occurrence, setOccurrence] = useState<TodoOccurrence>('once');
+  const [recurrence, setRecurrence] = useState<TodoRecurrence>('once');
 
   const handleAddTodo = useCallback(() => {
-    addTodo(todo, occurrence);
+    addTodo(todo, recurrence);
     setShowAddTodoForm(false);
-  }, [addTodo, todo, setShowAddTodoForm, occurrence]);
+  }, [addTodo, todo, setShowAddTodoForm, recurrence]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -64,11 +64,11 @@ export default function AddTodoForm({ setShowAddTodoForm }: AddTodoFormProps) {
           placeholder="Todo name"
           autoFocus
         />
-        <Select onValueChange={(value) => setOccurrence(value as TodoOccurrence)}>
+        <Select onValueChange={(value) => setRecurrence(value as TodoRecurrence)}>
           <SelectTrigger className="text-xs w-fit p-2 h-fit outline-none">
-            {occurrenceOptions.map(
+            {recurrenceOptions.map(
               (option) =>
-                occurrence === option.value && (
+                recurrence === option.value && (
                   <>
                     <option.icon className="mr-2 h-4 w-4" />
                     {option.label}
@@ -77,7 +77,7 @@ export default function AddTodoForm({ setShowAddTodoForm }: AddTodoFormProps) {
             )}
           </SelectTrigger>
           <SelectContent className="">
-            {occurrenceOptions.map((item) => (
+            {recurrenceOptions.map((item) => (
               <SelectItem key={item.value} className="p-2" value={item.value}>
                 <div className="flex">
                   <item.icon className="mr-2 h-4 w-4" />
