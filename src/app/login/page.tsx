@@ -23,7 +23,7 @@ const formSchema = z.object({
   password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
 });
 
-export default function LogIn() {
+export default function Login() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,9 +33,10 @@ export default function LogIn() {
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setError(null);
     setIsLoading(true);
     const result = await login(values);
-    if (result.error) {
+    if (result?.error) {
       setError(result.error);
     }
     setIsLoading(false);

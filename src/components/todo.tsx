@@ -88,17 +88,17 @@ export default function Todo({ todo }: TodoProps) {
           className="rounded-full"
           id={todo.id.toString()}
           onCheckedChange={() => toggleTodo(todo.id)}
-          checked={todo.completed}
+          checked={todo.is_completed}
         />
         <div className="flex flex-col gap-1">
           <label
             htmlFor={todo.id.toString()}
             className={cn(
               'text-[13px]',
-              todo.completed ? 'line-through text-gray-500' : 'text-white',
+              todo.is_completed ? 'line-through text-gray-500' : 'text-white',
             )}
           >
-            {todo.text}
+            {todo.title}
           </label>
           {todo.recurrence !== 'once' && (
             <span className="text-[10px] text-gray-500 flex items-center">

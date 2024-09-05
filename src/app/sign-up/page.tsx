@@ -16,25 +16,39 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signup } from './actions';
+import { useState } from 'react';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
-  confirmPassword: z.string().min(8, { message: 'Password must be at least 8 characters' }),
+  confirmPassword: z.string(),
 });
 
-export default function LogIn() {
+export default function Signup() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
   // 2. Define a submit handler.
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setError(null);
+    setSuccess(null);
+    setIsLoading(true);
     if (values.password !== values.confirmPassword) {
       form.setError('confirmPassword', { message: 'Passwords do not match' });
       return;
     }
-    signup(values);
+    const result = await signup(values);
+    if (result.error) {
+      setError(result.error);
+    } else if (result.success) {
+      setSuccess(result.success);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -45,6 +59,8 @@ export default function LogIn() {
           Enter your email and password to sign up to your account.
         </p>
         <Form {...form}>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {success && <p className="text-green-500 text-sm">{success}</p>}
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">
             <FormField
               control={form.control}
@@ -90,8 +106,8 @@ export default function LogIn() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Sign up
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Loading...' : 'Sign up'}
             </Button>
           </form>
         </Form>

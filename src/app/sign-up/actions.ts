@@ -12,6 +12,7 @@ interface SignupData {
 
 interface SignupResult {
   error?: string;
+  success?: string;
 }
 
 export async function signup(formData: SignupData): Promise<SignupResult> {
@@ -25,9 +26,7 @@ export async function signup(formData: SignupData): Promise<SignupResult> {
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
-    redirect('/error');
+    return { error: error.message };
   }
-
-  revalidatePath('/', 'layout');
-  redirect('/');
+  return { success: 'Check your email for a confirmation link.' };
 }

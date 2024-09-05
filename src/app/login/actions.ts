@@ -11,6 +11,7 @@ interface LoginData {
 }
 
 interface LoginResult {
+  success?: string;
   error?: string;
 }
 
@@ -30,4 +31,5 @@ export async function login(formData: LoginData): Promise<LoginResult> {
 
   revalidatePath('/', 'layout');
   redirect('/');
+  return { success: 'Login successful' };
 }

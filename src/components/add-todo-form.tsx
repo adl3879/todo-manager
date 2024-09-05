@@ -22,8 +22,8 @@ export default function AddTodoForm({ setShowAddTodoForm }: AddTodoFormProps) {
   const [todo, setTodo] = useState('');
   const [recurrence, setRecurrence] = useState<TodoRecurrence>('once');
 
-  const handleAddTodo = useCallback(() => {
-    addTodo(todo, recurrence);
+  const handleAddTodo = useCallback(async () => {
+    console.error(await addTodo(todo, recurrence));
     setShowAddTodoForm(false);
   }, [addTodo, todo, setShowAddTodoForm, recurrence]);
 

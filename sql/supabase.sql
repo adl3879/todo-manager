@@ -1,15 +1,12 @@
+drop table if exists todos cascade;
+drop table if exists todo_recurrences cascade;
+
 create table todos (
-  id uuid references auth.users not null primary key,
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users not null,
   title text not null,
   is_completed boolean default false,
-  created_at timestamp with time zone default current_timestamp,
-  updated_at timestamp with time zone default current_timestamp
-);
-
-create table todo_recurrences (
-  id uuid references auth.users not null primary key,
-  todo_id uuid not null references todos,
-  recurrence text not null,
+  recurrence text default 'once',
   created_at timestamp with time zone default current_timestamp,
   updated_at timestamp with time zone default current_timestamp
 );
